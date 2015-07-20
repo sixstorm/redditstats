@@ -3,7 +3,7 @@
 # Function: Writing to SQL DB
 # Function: After 1 hour, remove duplicates
 # Function: Get latest from Reddit
-# Test edit
+# Test edit 2
 
 import praw
 import datetime
@@ -12,7 +12,7 @@ import sqlite3
 import datetime
 from pprint import pprint
 
-uniqueid = 1
+#uniqueid = 1
 db = sqlite3.connect('test.db')
 r = praw.Reddit(user_agent="/r/teamtuck Stats Test")
 subreddit = r.get_subreddit("todayilearned")
@@ -23,9 +23,9 @@ def addtosqldb(title, score, dtp):
 
 	
 	print "Adding post into SQL DB"
-	cur.execute('''INSERT INTO Reddit (Title,Score,DTP) VALUES(?,?,?,?)''', (title,score,dtp,uniqueid))
-	uniqueid += 1
-	print uniqueid
+	cur.execute('''INSERT INTO Reddit (Title,Score,DTP) VALUES(?,?,?)''', (title,score,dtp))
+	#uniqueid += 1
+	#print uniqueid
 
 def createnewsqltable():
 	# Create table "Reddit"
