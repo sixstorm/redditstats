@@ -10,6 +10,7 @@ import datetime
 import requests
 import sqlite3
 import datetime
+import time
 from pprint import pprint
 
 
@@ -17,6 +18,7 @@ db = sqlite3.connect('test.db')
 r = praw.Reddit(user_agent="/r/teamtuck Stats Test")
 subreddit = r.get_subreddit("todayilearned")
 cur = db.cursor()
+reddict = {}
 
 
 def addtosqldb(title, score, dtp):
@@ -43,13 +45,28 @@ def removesqldup():
 
 def getrowcount():
 	print "Attempting to get count of Reddit posts"
-	cur.execute("SELECT * FROM Reddit")
-	rows = cur.fetchall()
-	print rows.count()
-	#rowcount = cur.execute('''SELECT COALESCE(MAX(rowid)+1, 0) FROM Reddit''')
-	#print "There are %s posts in your DB!" % rowcount
+	for row in cur.execute('''SELECT COUNT(Title) FROM Reddit'''):
+		rowcount = row[0]
+	print "There are %s posts in your DB!" % rowcount
 
-for submission in subreddit.get_new(limit=10):
+def gettime():
+	timenow = time.strftime("%Y-%m-%d %H:%M:%S")
+
+def showlasthour():
+	timenow = datetime.datetime.now()
+	starttime = timenow.replace(minute=0, second=0, microsecond=0)
+	cur.execute('''SELECT * FROM Reddit WHERE (DTP) >= (?)'''), starttime
+	rows = cur.fetchall()
+	for row in rows:
+		print row
+
+def addtodictionary():
+	cur.execute('''SELECT * FROM Reddit''')
+	rows = cur.fetchall()
+	#for row in rows:
+
+
+for submission in subreddit.get_new(limit=100):
 	# Convert UTC to Readable Timestamp
 	convertedts = datetime.datetime.fromtimestamp(int(submission.created_utc)).strftime('%Y-%m-%d %H:%M:%S')
 
@@ -61,8 +78,8 @@ for submission in subreddit.get_new(limit=10):
 	score = submission.score
 
 	# Add to SQL DB
-	print "Adding data to SQL DB"
 	addtosqldb(submission.title, submission.score, convertedts)
+
 
 '''
 	# Print all rows in DB with pprint
@@ -73,7 +90,6 @@ for submission in subreddit.get_new(limit=10):
 '''
 
 # Delete duplicates in SQL DB
-print "Clearing duplicates"
 removesqldup()
 
 # Get row count
@@ -82,3 +98,9 @@ getrowcount()
 # Commit to DB
 print "Committing to DB"
 db.commit()
+
+# Dictionary Test
+
+
+#print "Test print"
+#showlasthour()
