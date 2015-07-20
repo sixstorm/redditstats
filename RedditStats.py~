@@ -3,7 +3,6 @@
 # Function: Writing to SQL DB
 # Function: After 1 hour, remove duplicates
 # Function: Get latest from Reddit
-# Test edit
 
 import praw
 import datetime
