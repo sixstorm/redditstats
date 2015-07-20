@@ -1,0 +1,7 @@
+DELETE FROM Reddit
+WHERE rowid NOT IN
+(
+SELECT MIN(rowid)
+FROM Reddit
+GROUP BY Title, DTP
+)
